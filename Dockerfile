@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /app
 # Copier le fichier jar généré dans le conteneur
