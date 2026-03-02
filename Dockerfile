@@ -1,10 +1,9 @@
-# Utilisez une image de base avec Java
 FROM eclipse-temurin:17-jdk-jammy
-# Définir le répertoire de travail dans le conteneur
+
 WORKDIR /app
-# Copier le fichier jar généré dans le conteneur
-COPY target/docker-demo-0.0.1-SNAPSHOT.jar docker-demo.jar
-# Exposer le port sur lequel Spring Boot écoute
+
+COPY target/demo-github-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
-# Commande pour lancer l'application Spring Boot
-ENTRYPOINT ["java", "-jar", "/app/docker-demo.jar"]
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
