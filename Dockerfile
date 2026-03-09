@@ -1,6 +1,36 @@
-FROM eclipse-temurin:17-jdk-jammy
-# Définir le répertoire de travail dans le conteneur
+# -------- STAGE 1 : BUILD --------
+FROM eclipse-temurin:17-jdk AS builder
+
 WORKDIR /app
-COPY target/*.jar app.jar
+
+# installer maven
+RUN apt-get update && apt-get install -y maven
+
+# copier pom.xml
+COPY pom.xml .
+
+# télécharger les dépendances
+RUN mvn dependency:go-offline -B
+
+# copier le code source
+COPY src ./src
+
+# compiler l'application
+RUN mvn clean package -DskipTests
+
+# -------- STAGE 2 : RUNTIME --------
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+# installer wget pour healthcheck
+RUN apt-get update && apt-get install -y wget
+
+# copier le jar
+COPY --from=builder /app/target/docker-demo-0.0.1-SNAPSHOT.jar app.jar
+
+# exposer le port
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+
+# lancer l'application
+ENTRYPOINT ["java","-jar","/app/app.jar"]
